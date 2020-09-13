@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Avatar, IconButton } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
@@ -6,8 +6,23 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import EmojiEmotionsOutlinedIcon from '@material-ui/icons/EmojiEmotionsOutlined';
 import MicNoneOutlinedIcon from '@material-ui/icons/MicNoneOutlined';
 import './Chat.css';
+import axios from './axios';
 
 function Chat({ messages }) {
+  const [input, setInput] = useState("");
+  const sendMessage = async (e) => {
+    e.preventDefault();
+
+    await axios.post('/messages/new', {
+      "message": input,
+      "name": "Toan Ho",
+      "timestamp":  new Date().toUTCString(),
+      "received": false
+    });
+
+    setInput('');
+  };
+
   return (
     <div className="chat">
       <div className="chat__header">
@@ -38,7 +53,7 @@ function Chat({ messages }) {
             {message.timestamp}
           </span>
         </p>
-      ))}        
+      ))}
       </div>
     
       <div className="chat__footer">
@@ -46,8 +61,8 @@ function Chat({ messages }) {
           <EmojiEmotionsOutlinedIcon />
         </IconButton>
         <form>
-          <input placeholder="Type a message" type="text" />
-          <button type="submit">
+          <input value={input} onChange={e => setInput(e.target.value)} placeholder="Type a message" type="text" />
+          <button type="submit" onClick={sendMessage}>
             Send a message
           </button>
           <MicNoneOutlinedIcon />
